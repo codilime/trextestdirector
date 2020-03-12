@@ -1,0 +1,33 @@
+servers:
+  - name: receiver
+    management_ip: 198.18.0.10
+    ports:
+      - id: 0
+        ip: 198.18.10.10
+        default_gateway: 198.18.10.30
+      - id: 1
+        ip: 198.18.20.10
+        default_gateway: 198.18.20.30
+
+  - name: transmitter
+    management_ip: 198.18.0.20
+    ports:
+      - id: 0
+        ip: 198.18.10.20
+        default_gateway: 198.18.10.30
+      - id: 1
+        ip: 198.18.20.20
+        default_gateway: 198.18.20.30
+
+tests:
+  - name: sut_latency_test
+    duration: 60
+    transmit:
+      - from: transmitter:0
+        to: receiver:1
+        profile_file: profiles/latency_profile.py
+        tunables:
+          pps: 10000
+          flow_stats: latency
+          flow_stats_pps: 1000
+          flow_stats_pg_id: 1

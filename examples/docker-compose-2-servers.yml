@@ -1,0 +1,58 @@
+version: "3.7"
+services:
+  trex-server1:
+    image: codilimecom/trex:${TREX_IMAGE_TAG:-dev}
+    entrypoint: ["/etc/trex/entrypoint.sh"]
+    command: ["./t-rex-64", "-i"]
+    networks:
+      test-net1:
+        ipv4_address: 198.18.10.10
+      test-net2:
+        ipv4_address: 198.18.20.10
+      mgmt-net:
+        ipv4_address: 198.18.0.10
+    volumes:
+      - ./bin/trex-entrypoint.sh:/etc/trex/entrypoint.sh:ro
+      - ./trex/trex_cfg_1.yaml:/etc/trex/trex_cfg.yaml:ro
+    privileged: true
+    cap_add:
+      - ALL
+
+  trex-server2:
+    image: codilimecom/trex:${TREX_IMAGE_TAG:-dev}
+    entrypoint: ["/etc/trex/entrypoint.sh"]
+    command: ["./t-rex-64", "-i"]
+    networks:
+      test-net1:
+        ipv4_address: 198.18.10.20
+      test-net2:
+        ipv4_address: 198.18.20.20
+      mgmt-net:
+        ipv4_address: 198.18.0.20
+    volumes:
+      - ./bin/trex-entrypoint.sh:/etc/trex/entrypoint.sh:ro
+      - ./trex/trex_cfg_2.yaml:/etc/trex/trex_cfg.yaml:ro
+    privileged: true
+    cap_add:
+      - ALL
+
+networks:
+  test-net1:
+    name: test-net1
+    ipam:
+      driver: default
+      config:
+        - subnet: 198.18.10.0/24
+
+  test-net2:
+    name: test-net2
+    ipam:
+      driver: default
+      config:
+        - subnet: 198.18.20.0/24
+
+  mgmt-net:
+    name: mgmt-net
+    ipam:
+      config:
+        - subnet: 198.18.0.0/24

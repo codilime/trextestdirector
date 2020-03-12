@@ -1,0 +1,22 @@
+servers:
+  - name: trex_server
+    management_ip: 198.18.0.10
+    ports:
+      - id: 0
+        ip: 198.18.10.10
+        default_gateway: 198.18.20.10
+      - id: 1
+        ip: 198.18.20.10
+        default_gateway: 198.18.10.10
+
+tests:
+  - name: loopback_test
+    duration: 60
+    transmit:
+      - from: trex_server:0
+        to: trex_server:1
+        profile_file: profiles/latency_profile.py
+        tunables:
+          pps: 10000
+          flow_stats: stats
+          flow_stats_pg_id: 10

@@ -1,0 +1,13 @@
+- port_limit: 2
+  version: 2
+  low_end: true
+  interfaces: ["%IFNAME0%", "%IFNAME1%"] # The IFNAME string will be replaced by entrypoint script
+  port_info:
+    - ip: 198.18.10.30
+      default_gw: 198.18.10.10
+    - ip: 198.18.20.30
+      default_gw: 198.18.20.10
+  latency_measurement: "nanoseconds"
+  timesync_method: "ptp"
+  timesync_transport: "udp"
+  timesync_interval: 0

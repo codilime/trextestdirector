@@ -1,0 +1,24 @@
+version: "3.7"
+services:
+  trex-server1:
+    image: codilimecom/trex:${TREX_IMAGE_TAG:-dev}
+    entrypoint: ["/etc/trex/entrypoint.sh"]
+    command: ["./t-rex-64", "-i"]
+    networks:
+      mgmt-net:
+        ipv4_address: 198.18.0.10
+    volumes:
+      - ./bin/loopback-entrypoint.sh:/etc/trex/entrypoint.sh:ro
+      - ./trex/trex_cfg_loopback.yaml:/etc/trex_cfg.yaml:ro
+    privileged: true
+    cap_add:
+      - ALL
+
+networks:
+  mgmt-net:
+    name: mgmt-net
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 198.18.0.0/24

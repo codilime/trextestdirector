@@ -111,21 +111,13 @@ class TrexStlScenario(ABC):
             logger.debug(f"{server_name}: acquiring and resetting ports {port_ids}...")
             client.reset(port_ids)
             logger.debug(f"{server_name}: ports {port_ids} acquired")
-            client.set_service_mode(port_ids)
             for port in server["ports"]:
                 port_id = port["id"]
-                port_ip = port["ip"]
-                default_gateway = port["default_gateway"]
                 logger.debug(f"{server_name}: setting up port {port_id}")
-                logger.debug(
-                    f"{server_name}: port {port_id} set to l3 mode: src_ipv4 = {port_ip}, dst_ipv4 = {default_gateway}"
-                )
-                client.set_l3_mode(port_id, port_ip, default_gateway)
                 service_mode = port.get("service_mode")
                 if service_mode:
                     logger.debug(f"{server_name}: port {port_id} set to service mode")
-                else:
-                    client.set_service_mode(port_id, enabled=False)
+                    client.set_service_mode(port_id)
                 attributes = port.get("attributes")
                 if attributes:
                     client.set_port_attr(port_id, **attributes)
@@ -170,7 +162,7 @@ class TrexStlScenario(ABC):
             stream_ids = client.add_streams(profile.get_streams(), tx_port_id)
             stream_ids = stream_ids if isinstance(stream_ids, list) else [stream_ids]
             logger.debug(
-                f"Added {len(stream_ids)} streams to {tx_server_name} port {tx_port_id}"
+                f"{test_name}: added {len(stream_ids)} streams to {tx_server_name} port {tx_port_id}"
             )
             # to measure stats we need to attach to the receiver
             # a stream with pg_id of transmitter's stats stream, because
@@ -203,7 +195,7 @@ class TrexStlScenario(ABC):
                     stream_ids if isinstance(stream_ids, list) else [stream_ids]
                 )
                 logger.debug(
-                    f"{test_name}: Added {len(stream_ids)} streams to {rx_server_name} port {rx_port_id}"
+                    f"{test_name}: added {len(stream_ids)} streams to {rx_server_name} port {rx_port_id}"
                 )
         logger.debug(f"{test_name}: traffic profiles succesfully loaded")
 
@@ -249,7 +241,6 @@ class TrexStlScenario(ABC):
                 base_class.id == "TrexStlScenario" for base_class in class_def.bases
             ):
                 class_candidates.append(class_def)
-        logger.debug(f"test scenario class candidates: {class_candidates}")
         if len(class_candidates) < 1:
             raise Exception(f"Didn't found any test scenarios in {python_file}")
         if len(class_candidates) > 1:
